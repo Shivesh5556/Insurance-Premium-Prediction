@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Insurance Premium Prediction</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Insurance Premium Prediction</h1>
+
+    <form id="predictForm">
+        <label>Age:</label>
+        <input type="number" id="age" min="1" max="120" required>
+
+        <label>Weight (kg):</label>
+        <input type="number" step="0.1" id="weight" required>
+
+        <label>Height (m):</label>
+        <input type="number" step="0.01" id="height" required>
+
+        <label>Income (LPA):</label>
+        <input type="number" step="0.1" id="income" required>
+
+        <label>Smoker:</label>
+        <select id="smoker" required>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select>
+
+        <label>City:</label>
+        <input type="text" id="city" required>
+
+        <label>Occupation:</label>
+        <select id="occupation" required>
+            <option value="retired">Retired</option>
+            <option value="freelancer">Freelancer</option>
+            <option value="student">Student</option>
+            <option value="government_job">Government Job</option>
+            <option value="business_owner">Business Owner</option>
+            <option value="unemployed">Unemployed</option>
+            <option value="private_job">Private Job</option>
+        </select>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    <div id="result"></div>
+</div>
+
+
+<script>
+document.getElementById("predictForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const payload = {
+        age: parseInt(document.getElementById("age").value),
+        weight: parseFloat(document.getElementById("weight").value),
+        height: parseFloat(document.getElementById("height").value),
+        income_lpa: parseFloat(document.getElementById("income").value),
+        smoker: document.getElementById("smoker").value === "true",
+        city: document.getElementById("city").value,
+        occupation: document.getElementById("occupation").value
+    };
+
+    const response = await fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+    document.getElementById("result").innerHTML = 
+        `Predicted Category: <strong>${data.predicted_category}</strong>`;
+});
+</script>
+
+</body>
+</html>
